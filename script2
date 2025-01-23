@@ -13,7 +13,7 @@ import time
 from googleapiclient.http import MediaFileUpload
 
 # Specify download directory
-download_dir = "/tmp"  # Change to "/tmp" for GitHub Actions or Linux-based systems
+download_dir = "/tmp"  
 os.makedirs(download_dir, exist_ok=True)
 
 # Initialize WebDriver with headless settings
