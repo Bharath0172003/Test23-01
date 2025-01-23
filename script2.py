@@ -9,9 +9,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import mimetypes  # Add this import
 
 # Specify download directory
-download_dir = "/tmp"  
+download_dir = "/tmp"
 os.makedirs(download_dir, exist_ok=True)
 
 # Initialize WebDriver with headless settings
@@ -105,18 +106,6 @@ else:
 
 driver.quit()
 
-# Get the latest downloaded file
-downloaded_files = [os.path.join(download_dir, f) for f in os.listdir(download_dir) if os.path.isfile(os.path.join(download_dir, f))]
-if downloaded_files:
-    latest_file = max(downloaded_files, key=os.path.getctime)
-    print(f"File downloaded: {latest_file}")
-    latest_file = convert_to_csv(latest_file)
-else:
-    print("No file downloaded.")
-    latest_file = None
-
-driver.quit()
-
 # Upload to Google Drive
 def upload_to_google_drive(file_name, folder_id=None):
     try:
@@ -132,8 +121,8 @@ def upload_to_google_drive(file_name, folder_id=None):
         creds = Credentials.from_service_account_file(creds_file_path, scopes=SCOPES)
         service = build('drive', 'v3', credentials=creds)
         
-        mime = MimeTypes()
-        file_mime = mime.guess_type(file_name)[0]
+        # Use mimetypes module to guess file MIME type
+        file_mime = mimetypes.guess_type(file_name)[0]
 
         file_metadata = {'name': os.path.basename(file_name)}
         if folder_id:
@@ -151,13 +140,11 @@ def upload_to_google_drive(file_name, folder_id=None):
     except Exception as e:
         print("Failed to upload to Google Drive:", e)
 
-
-
-
 # Google Drive folder ID
 folder_id = "1TaDSIYndqnkYwuOIfLlQhdaPkTJ5ecTG"
 if latest_file:
     upload_to_google_drive(latest_file, folder_id)
 else:
     print("No file to upload.")
+
 
