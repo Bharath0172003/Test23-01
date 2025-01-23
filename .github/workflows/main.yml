@@ -28,4 +28,4 @@ jobs:
       env:
         GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}  # Provide the secret as an environment variable
       run: |
-        python script2.py  # Replace with the name of your Python script
+        python script3.py  # Replace with the name of your Python script
