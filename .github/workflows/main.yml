@@ -1,0 +1,31 @@
+name: Run Bizom Script
+
+on:
+  push:
+    branches:
+      - main  # Trigger this on pushes to the main branch
+  workflow_dispatch:  # Allows you to manually trigger the workflow
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest  # Runs the script on the latest Ubuntu environment
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3  # This checks out your repository code
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'  # Specifies the version of Python to use
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium pandas google-api-python-client google-auth  # Install necessary libraries
+
+    - name: Run Python Script
+      env:
+        GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}  # Provide the secret as an environment variable
+      run: |
+        python script.py  # Replace with the name of your Python script
