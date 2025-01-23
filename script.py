@@ -12,7 +12,7 @@ from mimetypes import MimeTypes
 import time
 
 # Specify download directory
-download_dir = "C:\\temp"
+download_dir = "\temp"
 os.makedirs(download_dir, exist_ok=True)
 
 # Initialize WebDriver with headless settings
