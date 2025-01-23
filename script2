@@ -9,11 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials
 from mimetypes import MimeTypes
-from googleapiclient.http import MediaFileUpload
 import time
+from googleapiclient.http import MediaFileUpload
 
 # Specify download directory
-download_dir = os.path.join(os.getenv("USERPROFILE", ""), "Downloads", "temp")  # Using user profile for flexibility
+download_dir = "/tmp"  # Change to "/tmp" for GitHub Actions or Linux-based systems
 os.makedirs(download_dir, exist_ok=True)
 
 # Initialize WebDriver with headless settings
@@ -121,9 +121,16 @@ driver.quit()
 # Upload to Google Drive
 def upload_to_google_drive(file_name, folder_id=None):
     try:
+        # Retrieve the GCP credentials JSON from GitHub Secrets
+        creds_json = os.getenv('GCP_CREDENTIALS_JSON')  # Secret stored in GitHub
+
+        # Write the secret JSON to a temporary file
+        creds_file_path = '/tmp/gcp_credentials.json'
+        with open(creds_file_path, 'w') as f:
+            f.write(creds_json)
+
         SCOPES = ['https://www.googleapis.com/auth/drive']
-        json_file_path = os.path.join(os.getenv("USERPROFILE", ""), "Downloads", "factory-attendance-448505-5aae36020537.json")  # Update path as per your system
-        creds = Credentials.from_service_account_file(json_file_path, scopes=SCOPES)
+        creds = Credentials.from_service_account_file(creds_file_path, scopes=SCOPES)
         service = build('drive', 'v3', credentials=creds)
         
         mime = MimeTypes()
@@ -145,8 +152,8 @@ def upload_to_google_drive(file_name, folder_id=None):
     except Exception as e:
         print("Failed to upload to Google Drive:", e)
 
-# Upload the converted file to Google Drive
-folder_id = '1vlqI9CZt9jgwbImKwB74pB-d7f-iOFdw'  # Replace with your folder ID, or None for My Drive
+# Folder ID should be the unique part from the URL
+folder_id = '1vlqI9CZt9jgwbImKwB74pB-d7f-iOFdw'  # Replace with the actual folder ID from the URL
 if latest_file:
     upload_to_google_drive(latest_file, folder_id)
 else:
