@@ -12,7 +12,7 @@ from mimetypes import MimeTypes
 import time
 
 # Specify download directory
-download_dir = "\temp"
+download_dir = r"C:\temp"  # Use raw string to handle backslashes correctly
 os.makedirs(download_dir, exist_ok=True)
 
 # Initialize WebDriver with headless settings
@@ -63,6 +63,7 @@ try:
     print("Update button clicked successfully!")
 except Exception as e:
     print("Failed to click the Update button:", e)
+    print(driver.page_source)  # Print the page source for debugging
 
 time.sleep(5)
 
@@ -75,6 +76,7 @@ try:
     print("Dropdown clicked successfully!")
 except Exception as e:
     print("Failed to click the dropdown:", e)
+    print(driver.page_source)  # Print the page source for debugging
 
 # Click Download Button
 try:
@@ -85,8 +87,9 @@ try:
     print("Download button clicked successfully!")
 except Exception as e:
     print("Failed to click the download button:", e)
+    print(driver.page_source)  # Print the page source for debugging
 
-time.sleep(20)
+time.sleep(20)  # Increase sleep to wait for the download to complete
 
 # Convert file to CSV
 def convert_to_csv(file_path):
@@ -122,16 +125,11 @@ from googleapiclient.http import MediaFileUpload
 # Upload to Google Drive
 def upload_to_google_drive(file_name, folder_id=None):
     try:
-        # Retrieve the GCP credentials from GitHub Secrets
-        creds_json = os.getenv('GCP_CREDENTIALS_JSON')  # Secret stored in GitHub
-        creds_file_path = '/tmp/gcp_credentials.json'
-
-        # Write the secret JSON to a temporary file
-        with open(creds_file_path, 'w') as f:
-            f.write(creds_json)
-
         SCOPES = ['https://www.googleapis.com/auth/drive']
-        creds = Credentials.from_service_account_file(creds_file_path, scopes=SCOPES)
+        creds = Credentials.from_service_account_file(
+            r'C:\Users\Bharath B S\Downloads\factory-attendance-448505-5aae36020537.json', 
+            scopes=SCOPES
+        )
         service = build('drive', 'v3', credentials=creds)
         
         mime = MimeTypes()
